@@ -1,0 +1,19 @@
+WIDTH = 800                     
+
+HEIGHT = 600                   
+
+ball = Actor("breakout_ball", (0, 300))
+
+def update():
+
+    ball.x += 1
+
+    if ball.right > WIDTH:
+
+        ball.x = 0
+
+def draw():
+
+    screen.fill((255, 255, 255)) 
+
+    ball.draw()
