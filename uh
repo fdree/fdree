@@ -1,0 +1,24 @@
+ @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void save(ProcessDTO dto) {
+        dto.setId(null);
+        Server serverEntity = serverMapper.selectById(dto.getServerId());
+        Assert.notNull(serverEntity, "服务器id不存在");
+
+        //进程名称、path不能重复，如："D:/test/test.pid
+        List<Process> processList = validateRepeat(dto.getName(), dto.getPath());
+        if (!processList.isEmpty()) {
+            //2- 唯一性验证 ,name
+            processList.stream().forEach(e -> {
+                if (dto.getName().equals(e.getName())) {
+                    CustomException.throwException("进程名称: " + dto.getName() + "已存在");
+                }
+                if (dto.getPath().equals(e.getPath())) {
+                    CustomException.throwException("进程ID路径: " + dto.getPath() + "已存在");
+                }
+            });
+        }
+        processMapper.insert(this.transferEntity(null, dto));
+    }
+
+   
