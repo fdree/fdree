@@ -1,0 +1,168 @@
+  /**
+   * Check if two values are loosely equal - that is,
+   * if they are plain objects, do they have the same shape?
+   */
+  function looseEqual (a, b) {
+    if (a === b) { return true }
+    var isObjectA = isObject(a);
+    var isObjectB = isObject(b);
+    if (isObjectA && isObjectB) {
+      try {
+        var isArrayA = Array.isArray(a);
+        var isArrayB = Array.isArray(b);
+        if (isArrayA && isArrayB) {
+          return a.length === b.length && a.every(function (e, i) {
+            return looseEqual(e, b[i])
+          })
+        } else if (a instanceof Date && b instanceof Date) {
+          return a.getTime() === b.getTime()
+        } else if (!isArrayA && !isArrayB) {
+          var keysA = Object.keys(a);
+          var keysB = Object.keys(b);
+          return keysA.length === keysB.length && keysA.every(function (key) {
+            return looseEqual(a[key], b[key])
+          })
+        } else {
+          /* istanbul ignore next */
+          return false
+        }
+      } catch (e) {
+        /* istanbul ignore next */
+        return false
+      }
+    } else if (!isObjectA && !isObjectB) {
+      return String(a) === String(b)
+    } else {
+      return false
+    }
+  }
+
+  /**
+   * Return the first index at which a loosely equal value can be
+   * found in the array (if value is a plain object, the array must
+   * contain an object of the same shape), or -1 if it is not present.
+   */
+  function looseIndexOf (arr, val) {
+    for (var i = 0; i < arr.length; i++) {
+      if (looseEqual(arr[i], val)) { return i }
+    }
+    return -1
+  }
+
+  /**
+   * Ensure a function is called only once.
+   */
+  function once (fn) {
+    var called = false;
+    return function () {
+      if (!called) {
+        called = true;
+        fn.apply(this, arguments);
+      }
+    }
+  }
+
+  var SSR_ATTR = 'data-server-rendered';
+
+  var ASSET_TYPES = [
+    'component',
+    'directive',
+    'filter'
+  ];
+
+  var LIFECYCLE_HOOKS = [
+    'beforeCreate',
+    'created',
+    'beforeMount',
+    'mounted',
+    'beforeUpdate',
+    'updated',
+    'beforeDestroy',
+    'destroyed',
+    'activated',
+    'deactivated',
+    'errorCaptured',
+    'serverPrefetch'
+  ];
+
+  /*  */
+
+
+
+  var config = ({
+    /**
+     * Option merge strategies (used in core/util/options)
+     */
+    // $flow-disable-line
+    optionMergeStrategies: Object.create(null),
+
+    /**
+     * Whether to suppress warnings.
+     */
+    silent: false,
+
+    /**
+     * Show production mode tip message on boot?
+     */
+    productionTip: "development" !== 'production',
+
+    /**
+     * Whether to enable devtools
+     */
+    devtools: "development" !== 'production',
+
+    /**
+     * Whether to record perf
+     */
+    performance: false,
+
+    /**
+     * Error handler for watcher errors
+     */
+    errorHandler: null,
+
+    /**
+     * Warn handler for watcher warns
+     */
+    warnHandler: null,
+
+    /**
+     * Ignore certain custom elements
+     */
+    ignoredElements: [],
+
+    /**
+     * Custom user key aliases for v-on
+     */
+    // $flow-disable-line
+    keyCodes: Object.create(null),
+
+    /**
+     * Check if a tag is reserved so that it cannot be registered as a
+     * component. This is platform-dependent and may be overwritten.
+     */
+    isReservedTag: no,
+
+    /**
+     * Check if an attribute is reserved so that it cannot be used as a component
+     * prop. This is platform-dependent and may be overwritten.
+     */
+    isReservedAttr: no,
+
+    /**
+     * Check if a tag is an unknown element.
+     * Platform-dependent.
+     */
+    isUnknownElement: no,
+
+    /**
+     * Get the namespace of an element
+     */
+    getTagNamespace: noop,
+
+    /**
+     * Parse the real tag name for the specific platform.
+     */
+    parsePlatformTagName: identity,
+
+ 
