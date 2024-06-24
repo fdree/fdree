@@ -1,0 +1,18 @@
+view{
+  height: 400rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+/* 奇数背景色是粉色 */
+view:nth-child(odd){
+  background-color: pink;
+}
+
+
+/* 偶数背景色绿色 */
+view:nth-child(even){
+  background-color: rgb(17, 133, 88);
+}
