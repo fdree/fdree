@@ -1,0 +1,105 @@
+import json
+import time
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+import requests
+
+import websocket
+
+# -----------------------------测试--------------------------------
+# rqst = 0
+# while True:
+#     try:
+#         pass_queue()
+#         pass_queue()
+#
+#         print('test pass queue ==> ok!')
+#         res = requests.post(url=url, headers=pre_header, json=data)
+#         print('test request ==> ok!')
+#         tm = res.elapsed.total_seconds()
+#         print(tm)
+#         print(res.status_code)
+#         print(res.text)
+#         rqst += 1
+#         if rqst >= 2:
+#             break
+#     except Exception as e:
+#         print(e)
+#         pass
+
+# -----------------------------正题--------------------------------
+# def get_utcTime():
+#     utc_now = datetime.utcnow().replace(tzinfo=timezone.utc)
+#
+#     SHA_TZ = timezone(
+#         timedelta(hours=8),
+#         name='Asia/Shanghai',
+#     )
+#
+#     # 北京时间
+#     beijing_now = utc_now.astimezone(SHA_TZ)
+#     print(beijing_now)
+#     print(type(beijing_now))
+#
+#     fmt = '%Y-%m-%d %H:%M:%S'
+#     now_fmt = beijing_now.strftime(fmt)
+#     print(now_fmt)
+#     print(type(now_fmt))
+#     print('---------------------------')
+#     return now_fmt
+
+
+struct_openTime = "2023-7-10 22:00:00"
+openTime = time.strptime(struct_openTime, "%Y-%m-%d %H:%M:%S")
+openTime = time.mktime(openTime)
+request_cnt = 0
+while True:
+    # nowTime = int(time.mktime(time.localtime()))
+    # print(get_utcTime(), openTime)
+    # print(, openTime)
+    timestamp = time.time()
+
+    # 转换成localtime
+    time_local = time.localtime(timestamp)
+    # 转换成新的时间格式(2016-05-05 20:28:54)
+    dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
+    print(dt, struct_openTime)
+    if time.time() >= openTime:
+        # print(nowTime, openTime,time.time())
+        print("------------------------------")
+        # print(time.time(), openTime)
+        print("ok Try to grab seat!")
+        grab_time = time.localtime(timestamp)
+        ts = time.strftime("%Y-%m-%d %H:%M:%S", grab_time)
+        print('当前时间是： ' + ts)
+        request_cnt += 1
+        try:
+            pass_queue()
+            pass_queue()
+
+            print('test pass queue ==> ok!')
+            res = requests.post(url=url, headers=pre_header, json=data)
+            print('test request ==> ok!')
+            tm = res.elapsed.total_seconds()
+            print(tm)
+            print(res.status_code)
+            print(res.text)
+            if str(res.text).count("true"):
+                print("******************************")
+                print("恭喜你！预定成功！程序即将结束......")
+                print("******************************\n")
+                break
+            else:
+                print('---睡眠0.3s---')
+                time.sleep(0.3)
+        except Exception as e:
+            print(e)
+        # break
+        print('test Exception continue.')
+
+        print("------------------------------\n\n")
+    if request_cnt >= 100:  # 防止请求过多 被老师XX 所以这里我只敢 “最多” 请求10次
+        break  # 另一个作用是避免图书馆服务器有延迟 加上上面的sleep 延迟时间可以控制在 10*0.3s = 3s 内 而且避免了过多的请求（程序1秒内发送的请求是很可怕的数量）
+print("程序结束成功！")
+
